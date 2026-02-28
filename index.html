@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Índice de Condiciones Habilitantes para la IA — Infraestructura Digital</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface-hover: #222632;
+    --border: #2a2e3a;
+    --text: #e4e6ed;
+    --text-muted: #8b8fa3;
+    --accent: #5b8def;
+    --accent-dim: rgba(91,141,239,0.12);
+    --high: #4ade80;
+    --high-dim: rgba(74,222,128,0.12);
+    --mid: #fbbf24;
+    --mid-dim: rgba(251,191,36,0.12);
+    --low: #f87171;
+    --low-dim: rgba(248,113,113,0.12);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 2rem;
+  }
+
+  .header {
+    max-width: 1100px;
+    margin: 0 auto 2.5rem;
+  }
+
+  .header h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.3rem;
+  }
+
+  .header h1 span { color: var(--accent); }
+
+  .header p {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+
+  .controls {
+    max-width: 1100px;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .controls button {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .controls button:hover { border-color: var(--accent); color: var(--text); }
+  .controls button.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+
+  .search-box {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    outline: none;
+    width: 200px;
+    transition: border-color 0.2s;
+  }
+  .search-box:focus { border-color: var(--accent); }
+  .search-box::placeholder { color: var(--text-muted); }
+
+  .table-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  thead th {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    padding: 0.9rem 1rem;
+    text-align: left;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+    transition: color 0.2s, background 0.2s;
+  }
+
+  thead th:hover { color: var(--accent); background: var(--surface-hover); }
+  thead th.sorted { color: var(--accent); }
+  thead th .arrow { margin-left: 4px; font-size: 0.65rem; }
+  thead th .sort-hint { margin-left: 4px; font-size: 0.65rem; opacity: 0.3; }
+  thead th:hover .sort-hint { opacity: 0.7; }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--surface-hover); }
+
+  tbody td {
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  .rank {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    width: 36px;
+    text-align: center;
+  }
+
+  .jurisdiccion { font-weight: 600; min-width: 160px; }
+
+  .value {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.82rem;
+    text-align: right;
+    min-width: 80px;
+  }
+
+  .bar-cell {
+    min-width: 180px;
+    padding-right: 1.5rem;
+  }
+
+  .bar-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .bar-track {
+    flex: 1;
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.5s ease;
+  }
+
+  .bar-value {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.82rem;
+    font-weight: 600;
+    min-width: 38px;
+    text-align: right;
+  }
+
+  .tag {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 500;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    letter-spacing: 0.03em;
+  }
+
+  .tag-high { background: var(--high-dim); color: var(--high); }
+  .tag-mid { background: var(--mid-dim); color: var(--mid); }
+  .tag-low { background: var(--low-dim); color: var(--low); }
+
+  .summary {
+    max-width: 1100px;
+    margin: 0 auto 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.2rem 1.4rem;
+  }
+
+  .stat-card .label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.3rem;
+  }
+
+  .stat-card .number {
+    font-family: 'DM Mono', monospace;
+    font-size: 1.4rem;
+    font-weight: 700;
+  }
+
+  .stat-card .detail {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.2rem;
+  }
+
+  .footer {
+    max-width: 1100px;
+    margin: 1.5rem auto 0;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-align: left;
+  }
+
+  @media (max-width: 768px) {
+    body { padding: 1rem; }
+    .bar-cell { display: none; }
+    .controls { gap: 0.5rem; }
+    .search-box { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Índice de Condiciones Habilitantes para la IA — <span>Infraestructura Digital</span></h1>
+  <p>Dimensión 1: Penetración de internet, velocidad de descarga y participación de fibra óptica por provincia. Datos: ENACOM.</p>
+</div>
+
+<div class="summary" id="summary"></div>
+
+<div class="controls">
+  <input type="text" class="search-box" id="search" placeholder="Buscar provincia...">
+  <button data-filter="all" class="active">Todas</button>
+  <button data-filter="high">Alto (>50)</button>
+  <button data-filter="mid">Medio (25-50)</button>
+  <button data-filter="low">Bajo (<25)</button>
+</div>
+
+<div class="table-container">
+  <table>
+    <thead>
+      <tr>
+        <th data-col="rank" class="sorted"># <span class="arrow">▲</span></th>
+        <th data-col="jurisdiccion">Jurisdicción</th>
+        <th data-col="accesos">Accesos /100 hog.</th>
+        <th data-col="velocidad">Velocidad (Mbps)</th>
+        <th data-col="fibra">Fibra óptica</th>
+        <th data-col="indice" colspan="2">Índice</th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+</div>
+
+<div class="footer">
+  Elaboración propia en base a datos de ENACOM. Metodología: cada indicador fue normalizado con el método Min-Max (escala 0-100) para hacerlos comparables, y luego se ponderaron según su relevancia: Accesos cada 100 hogares (50%) · Velocidad media de descarga (30%) · Proporción de fibra óptica (20%). El índice final es la suma ponderada de los tres componentes normalizados.
+</div>
+
+<script>
+const NACIONAL = {accesos:83.570, velocidad:234.480, fibra:0.452, indice:52.524};
+
+const DATA = [
+  {jurisdiccion:"CABA", accesos:119.280, velocidad:331.700, fibra:0.300, indice:83.926},
+  {jurisdiccion:"San Luis", accesos:120.310, velocidad:230.140, fibra:0.353, indice:74.553},
+  {jurisdiccion:"Neuquén", accesos:99.810, velocidad:225.400, fibra:0.343, indice:59.647},
+  {jurisdiccion:"Buenos Aires", accesos:84.480, velocidad:293.010, fibra:0.444, indice:59.573},
+  {jurisdiccion:"Córdoba", accesos:97.380, velocidad:157.990, fibra:0.487, indice:54.286},
+  {jurisdiccion:"San Juan", accesos:68.790, velocidad:240.650, fibra:0.675, indice:49.211},
+  {jurisdiccion:"La Pampa", accesos:108.510, velocidad:67.390, fibra:0.379, indice:48.701},
+  {jurisdiccion:"Catamarca", accesos:77.810, velocidad:152.030, fibra:0.762, indice:47.762},
+  {jurisdiccion:"Río Negro", accesos:84.600, velocidad:158.680, fibra:0.494, indice:45.773},
+  {jurisdiccion:"Tucumán", accesos:68.000, velocidad:160.050, fibra:0.857, indice:44.536},
+  {jurisdiccion:"Santa Fe", accesos:82.890, velocidad:142.930, fibra:0.528, indice:43.742},
+  {jurisdiccion:"Tierra del Fuego", accesos:105.750, velocidad:90.930, fibra:0.132, indice:42.657},
+  {jurisdiccion:"Mendoza", accesos:62.730, velocidad:189.400, fibra:0.732, indice:40.804},
+  {jurisdiccion:"Chubut", accesos:81.080, velocidad:140.970, fibra:0.305, indice:36.138},
+  {jurisdiccion:"Misiones", accesos:63.810, velocidad:137.050, fibra:0.513, indice:29.554},
+  {jurisdiccion:"Entre Ríos", accesos:73.840, velocidad:117.010, fibra:0.320, indice:28.835},
+  {jurisdiccion:"Santa Cruz", accesos:70.980, velocidad:72.330, fibra:0.572, indice:28.753},
+  {jurisdiccion:"La Rioja", accesos:80.960, velocidad:76.230, fibra:0.296, indice:28.450},
+  {jurisdiccion:"Salta", accesos:58.910, velocidad:156.750, fibra:0.447, indice:26.604},
+  {jurisdiccion:"Corrientes", accesos:61.090, velocidad:141.000, fibra:0.404, indice:25.130},
+  {jurisdiccion:"Jujuy", accesos:68.040, velocidad:82.720, fibra:0.427, indice:23.912},
+  {jurisdiccion:"Chaco", accesos:52.340, velocidad:134.310, fibra:0.572, indice:22.965},
+  {jurisdiccion:"Santiago del Estero", accesos:51.530, velocidad:118.770, fibra:0.428, indice:16.676},
+  {jurisdiccion:"Formosa", accesos:47.620, velocidad:119.870, fibra:0.316, indice:11.024},
+];
+
+let sortCol = 'indice';
+let sortAsc = false;
+let activeFilter = 'all';
+
+function getLevel(val) {
+  if (val > 50) return 'high';
+  if (val >= 25) return 'mid';
+  return 'low';
+}
+
+function getBarColor(level) {
+  return level === 'high' ? 'var(--high)' : level === 'mid' ? 'var(--mid)' : 'var(--low)';
+}
+
+function renderSummary(data) {
+  const max = data.reduce((a,b) => a.indice > b.indice ? a : b);
+  const min = data.reduce((a,b) => a.indice < b.indice ? a : b);
+  const ratio = (max.indice / min.indice).toFixed(1);
+  const aboveNat = data.filter(d => d.indice >= NACIONAL.indice).length;
+  const provAvg = (data.reduce((s,d) => s+d.indice, 0) / data.length).toFixed(1);
+
+  document.getElementById('summary').innerHTML = `
+    <div class="stat-card">
+      <div class="label">Total país</div>
+      <div class="number">${NACIONAL.indice.toFixed(1)}</div>
+      <div class="detail">${aboveNat} de ${data.length} por encima</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Máximo</div>
+      <div class="number" style="color:var(--high)">${max.indice.toFixed(1)}</div>
+      <div class="detail">${max.jurisdiccion}</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Mínimo</div>
+      <div class="number" style="color:var(--low)">${min.indice.toFixed(1)}</div>
+      <div class="detail">${min.jurisdiccion}</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Brecha máx/mín</div>
+      <div class="number" style="color:var(--accent)">${ratio}x</div>
+      <div class="detail">${max.jurisdiccion} vs ${min.jurisdiccion}</div>
+    </div>
+  `;
+}
+
+function renderTable() {
+  const search = document.getElementById('search').value.toLowerCase();
+  
+  let filtered = DATA.filter(d => {
+    if (search && !d.jurisdiccion.toLowerCase().includes(search)) return false;
+    if (activeFilter === 'high') return d.indice > 50;
+    if (activeFilter === 'mid') return d.indice >= 25 && d.indice <= 50;
+    if (activeFilter === 'low') return d.indice < 25;
+    return true;
+  });
+
+  filtered.sort((a, b) => {
+    let va = a[sortCol], vb = b[sortCol];
+    if (typeof va === 'string') { va = va.toLowerCase(); vb = vb.toLowerCase(); }
+    if (va < vb) return sortAsc ? -1 : 1;
+    if (va > vb) return sortAsc ? 1 : -1;
+    return 0;
+  });
+
+  const maxIndice = Math.max(...DATA.map(d => d.indice));
+
+  const tbody = document.getElementById('tbody');
+  tbody.innerHTML = filtered.map((d, i) => {
+    const level = getLevel(d.indice);
+    const pct = (d.indice / maxIndice * 100).toFixed(0);
+    const tagLabel = level === 'high' ? 'ALTO' : level === 'mid' ? 'MEDIO' : 'BAJO';
+    return `<tr>
+      <td class="rank">${i + 1}</td>
+      <td class="jurisdiccion">${d.jurisdiccion}</td>
+      <td class="value">${d.accesos.toFixed(1)}</td>
+      <td class="value">${d.velocidad.toFixed(1)}</td>
+      <td class="value">${(d.fibra * 100).toFixed(0)}%</td>
+      <td class="bar-cell">
+        <div class="bar-wrapper">
+          <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${getBarColor(level)}"></div></div>
+          <span class="bar-value" style="color:${getBarColor(level)}">${d.indice.toFixed(1)}</span>
+        </div>
+      </td>
+      <td><span class="tag tag-${level}">${tagLabel}</span></td>
+    </tr>`;
+  }).join('');
+
+  renderSummary(filtered);
+  updateHeaders();
+}
+
+function updateHeaders() {
+  document.querySelectorAll('thead th').forEach(th => {
+    const col = th.dataset.col;
+    if (!col) return;
+    th.classList.toggle('sorted', col === sortCol);
+    // Remove existing arrows and hints
+    th.querySelectorAll('.arrow, .sort-hint').forEach(el => el.remove());
+    if (col === sortCol) {
+      th.innerHTML += ` <span class="arrow">${sortAsc ? '▲' : '▼'}</span>`;
+    } else {
+      th.innerHTML += ` <span class="sort-hint">⇅</span>`;
+    }
+  });
+}
+
+document.querySelectorAll('thead th').forEach(th => {
+  th.addEventListener('click', () => {
+    const col = th.dataset.col;
+    if (!col) return;
+    if (col === 'rank') {
+      sortCol = 'indice';
+      sortAsc = !sortAsc;
+    } else if (sortCol === col) {
+      sortAsc = !sortAsc;
+    } else {
+      sortCol = col;
+      sortAsc = col === 'jurisdiccion';
+    }
+    renderTable();
+  });
+});
+
+document.querySelectorAll('.controls button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.controls button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter = btn.dataset.filter;
+    renderTable();
+  });
+});
+
+document.getElementById('search').addEventListener('input', renderTable);
+
+renderTable();
+</script>
+</body>
+</html>
