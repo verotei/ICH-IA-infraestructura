@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Índice de Condiciones Habilitantes para la IA — Infraestructura Digital</title>
+<title>Indice de Condiciones Habilitantes para la IA — Infraestructura Digital</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script>
   window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
@@ -253,10 +253,42 @@
   }
 
   @media (max-width: 768px) {
-    body { padding: 1rem; }
-    .bar-cell { display: none; }
-    .controls { gap: 0.5rem; }
-    .search-box { width: 100%; }
+    body { padding: 0.75rem; }
+
+    .header { margin: 0 auto 1.5rem; }
+    .header h1 { font-size: 1.2rem; }
+
+    .summary {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.6rem;
+      margin: 0 auto 1.2rem;
+    }
+
+    .stat-card { padding: 0.8rem 1rem; }
+    .stat-card .number { font-size: 1.1rem; }
+
+    .controls {
+      gap: 0.4rem;
+      margin: 0 auto 1rem;
+    }
+    .controls button {
+      font-size: 0.7rem;
+      padding: 0.4rem 0.7rem;
+    }
+    .search-box { width: 100%; font-size: 0.8rem; }
+
+    .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+    table { min-width: 600px; }
+
+    .bar-cell { min-width: 120px; }
+
+    thead th { padding: 0.7rem 0.6rem; font-size: 0.6rem; }
+    tbody td { padding: 0.6rem 0.6rem; font-size: 0.78rem; }
+    .jurisdiccion { min-width: 130px; }
+    .value { min-width: 60px; }
+
+    .footer { font-size: 0.65rem; margin-top: 1rem; }
   }
 </style>
 </head>
