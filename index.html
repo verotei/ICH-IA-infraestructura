@@ -23,6 +23,8 @@
     --high-dim: rgba(74,222,128,0.12);
     --mid: #fbbf24;
     --mid-dim: rgba(251,191,36,0.12);
+    --mid-low: #fb923c;
+    --mid-low-dim: rgba(251,146,60,0.12);
     --low: #f87171;
     --low-dim: rgba(248,113,113,0.12);
   }
@@ -243,9 +245,10 @@
     letter-spacing: 0.03em;
   }
 
-  .tag-high { background: var(--high-dim); color: var(--high); }
-  .tag-mid { background: var(--mid-dim); color: var(--mid); }
-  .tag-low { background: var(--low-dim); color: var(--low); }
+  .tag-alto { background: var(--high-dim); color: var(--high); }
+  .tag-medio-alto { background: var(--mid-dim); color: var(--mid); }
+  .tag-medio-bajo { background: var(--mid-low-dim); color: var(--mid-low); }
+  .tag-bajo { background: var(--low-dim); color: var(--low); }
 
   .summary {
     max-width: 1100px;
@@ -342,9 +345,10 @@
 <div class="controls">
   <input type="text" class="search-box" id="search" placeholder="Buscar provincia...">
   <button data-filter="all" class="active">Todas</button>
-  <button data-filter="high">Alto (>50)</button>
-  <button data-filter="mid">Medio (25-50)</button>
-  <button data-filter="low">Bajo (<25)</button>
+  <button data-filter="alto">Alto</button>
+  <button data-filter="medio-alto">Medio-Alto</button>
+  <button data-filter="medio-bajo">Medio-Bajo</button>
+  <button data-filter="bajo">Bajo</button>
   <button id="btnCompare" class="btn-compare" disabled>Comparar selección</button>
   <button id="btnClear" class="btn-clear" disabled>Limpiar</button>
 </div>
@@ -368,7 +372,7 @@
 
 <div class="footer">
   <strong>Variables:</strong> Penetración de internet fijo: accesos cada 100 hogares por provincia. Velocidad media de descarga: Mbps promedio por provincia. Fibra óptica: proporción de accesos por fibra sobre el total de accesos.<br><br>
-  <strong>Metodología:</strong> Cada indicador fue normalizado con el método Min-Max (escala 0-100) para hacerlos comparables, y luego se ponderaron según su relevancia: Penetración (50%) · Velocidad (30%) · Fibra óptica (20%). El índice final es la suma ponderada de los tres componentes normalizados.<br><br>
+  <strong>Metodología:</strong> Cada indicador fue normalizado con el método Min-Max (escala 0-100) para hacerlos comparables, y luego se ponderaron según su relevancia: Penetración (50%) · Velocidad (30%) · Fibra óptica (20%). El índice final es la suma ponderada de los tres componentes normalizados. Las categorías (Alto, Medio-Alto, Medio-Bajo y Bajo) fueron definidas en función de cuartiles de la distribución.<br><br>
   <strong>Fuente:</strong> Elaboración propia en base a ENACOM (3T 2025).<br><br>
   Desarrollado por <a href="https://www.linkedin.com/in/ver%C3%B3nica-teilletchea" target="_blank" style="color:var(--accent);text-decoration:none;">Verónica Teilletchea</a>
 </div>
@@ -409,14 +413,17 @@ let activeFilter = 'all';
 let selected = new Set();
 let compareMode = false;
 
+const Q1 = 28.0, Q2 = 41.7, Q3 = 48.8;
+
 function getLevel(val) {
-  if (val > 50) return 'high';
-  if (val >= 25) return 'mid';
-  return 'low';
+  if (val > Q3) return 'alto';
+  if (val > Q2) return 'medio-alto';
+  if (val > Q1) return 'medio-bajo';
+  return 'bajo';
 }
 
 function getBarColor(level) {
-  return level === 'high' ? 'var(--high)' : level === 'mid' ? 'var(--mid)' : 'var(--low)';
+  return level === 'alto' ? 'var(--high)' : level === 'medio-alto' ? 'var(--mid)' : level === 'medio-bajo' ? 'var(--mid-low)' : 'var(--low)';
 }
 
 function renderSummary(data) {
@@ -456,9 +463,10 @@ function renderTable() {
   let filtered = DATA.filter(d => {
     if (compareMode && !selected.has(d.jurisdiccion)) return false;
     if (search && !d.jurisdiccion.toLowerCase().includes(search)) return false;
-    if (activeFilter === 'high') return d.indice > 50;
-    if (activeFilter === 'mid') return d.indice >= 25 && d.indice <= 50;
-    if (activeFilter === 'low') return d.indice < 25;
+    if (activeFilter === 'alto') return d.indice > Q3;
+    if (activeFilter === 'medio-alto') return d.indice > Q2 && d.indice <= Q3;
+    if (activeFilter === 'medio-bajo') return d.indice > Q1 && d.indice <= Q2;
+    if (activeFilter === 'bajo') return d.indice <= Q1;
     return true;
   });
 
@@ -476,7 +484,7 @@ function renderTable() {
   tbody.innerHTML = filtered.map((d, i) => {
     const level = getLevel(d.indice);
     const pct = (d.indice / maxIndice * 100).toFixed(0);
-    const tagLabel = level === 'high' ? 'ALTO' : level === 'mid' ? 'MEDIO' : 'BAJO';
+    const tagLabel = level === 'alto' ? 'ALTO' : level === 'medio-alto' ? 'MEDIO-ALTO' : level === 'medio-bajo' ? 'MEDIO-BAJO' : 'BAJO';
     return `<tr class="${selected.has(d.jurisdiccion) ? 'selected' : ''}">
       <td class="check-col"><input type="checkbox" data-j="${d.jurisdiccion}" ${selected.has(d.jurisdiccion) ? 'checked' : ''}></td>
       <td class="rank">${i + 1}</td>
